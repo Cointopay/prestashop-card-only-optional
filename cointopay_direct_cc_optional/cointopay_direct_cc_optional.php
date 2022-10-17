@@ -457,7 +457,7 @@ class Cointopay_Direct_Cc_Optional extends PaymentModule
         $currency = new CurrencyCore($order->id_currency);
         $OrdCurrency = $this->currencyCode($currency->iso_code);
         $link = new Link();
-        $paymentUrl = Context::getContext()->shop->getBaseURL(true) . 'module/' . $this->name . '/makepayment?id_order=' . $order->reference . '&internal_order_id=' . $id_order . '&amount=' . $Ordtotal . '&isocode=' . $OrdCurrency;
+        $paymentUrl = Context::getContext()->shop->getBaseURL(true) . 'module/' . $this->name . '/makepayment?id_order=' . $order->reference . '&internal_order_id=' . $order->id . '&amount=' . $Ordtotal . '&isocode=' . $OrdCurrency;
         $customer = $order->getCustomer();
         if (Tools::isSubmit('send' . $this->name . 'Payment')) {
             $data = array(
@@ -485,17 +485,22 @@ class Cointopay_Direct_Cc_Optional extends PaymentModule
         }
 
         //return $this->display(__FILE__, 'views/templates/hook/admin_order.tpl');
-        return '<div class="panel" id="cointopaydirectccform">
-                    <div class="panel-heading">Payment Page(' . $this->displayName . ')</div>
-                    <div>Payment Page For this Order:<br/><span id="cointopaydirectccpurl">' . $paymentUrl . '</span></div>
-					<form method="post" action="" style="display:inline-block;">
-                    <input type="submit" class="btn btn-outline-secondary" name="send' . $this->name . 'Payment" value="Send To Customer" />
-					</form><button id="cointopaydirectcccopytext" class="btn btn-outline-secondary" onclick="ctpdirectccCopyFunction()" style="margin-left:10px;">Copy URL to clipboard</button>
-                </div> <script>
-                    function ctpdirectccCopyFunction() {
-					  var copyText = document.getElementById("cointopaydirectccpurl");
-						navigator.clipboard.writeText(copyText.innerText);
-					}
+        return '<div class="panel">
+                    <div class="panel-heading">Payment Page (' . $this->displayName . ')</div>
+                    <div>Payment Page For this Order: <br/>' . $paymentUrl . '</div>
+                    <form method="post" style="display: inline-block;">
+                        <input type="submit" class="btn btn-outline-secondary" name="send{$this->name}Payment" value="Send To Customer" />
+                    </form>
+                    <button class="btn btn-outline-secondary" style="margin-left: 10px;" onclick="ctpCopyPaymentUrl(this);" data-url="' . $paymentUrl . '">
+                        Copy URL to Clipboard
+                    </button>
+                </div>
+                <script>
+                    if (ctpCopyPaymentUrl !== "function") {
+                        function ctpCopyPaymentUrl(_self) {
+                            navigator.clipboard.writeText(_self.dataset.url);
+                        }
+                    }
                 </script>';
     }
 
@@ -540,19 +545,25 @@ class Cointopay_Direct_Cc_Optional extends PaymentModule
         }
 
         //return $this->display(__FILE__, 'views/templates/hook/admin_order.tpl');
-        return '<div class="panel" id="cointopaydirectccform">
-                    <div class="panel-heading">Payment Page(' . $this->displayName . ')</div>
-                    <div>Payment Page For this Order:<br/><span id="cointopaydirectccpurl">' . $paymentUrl . '</span></div>
-					<form method="post" action="" style="display:inline-block;">
-                    <input type="submit" class="btn btn-outline-secondary" name="send' . $this->name . 'Payment" value="Send To Customer" />
-					</form><button id="cointopaydirectcccopytext" class="btn btn-outline-secondary" onclick="ctpdirectccCopyFunction()" style="margin-left:10px;">Copy URL to clipboard</button>
-                </div> <script>
-                    function ctpdirectccCopyFunction() {
-					  var copyText = document.getElementById("cointopaydirectccpurl");
-						navigator.clipboard.writeText(copyText.innerText);
-					}
+        return '<div class="panel">
+                    <div class="panel-heading">Payment Page (' . $this->displayName . ')</div>
+                    <div>Payment Page For this Order: <br/>' . $paymentUrl . '</div>
+                    <form method="post" style="display: inline-block;">
+                        <input type="submit" class="btn btn-outline-secondary" name="send{$this->name}Payment" value="Send To Customer" />
+                    </form>
+                    <button class="btn btn-outline-secondary" style="margin-left: 10px;" onclick="ctpCopyPaymentUrl(this);" data-url="' . $paymentUrl . '">
+                        Copy URL to Clipboard
+                    </button>
+                </div>
+                <script>
+                    if (ctpCopyPaymentUrl !== "function") {
+                        function ctpCopyPaymentUrl(_self) {
+                            navigator.clipboard.writeText(_self.dataset.url);
+                        }
+                    }
                 </script>';
     }
+
     /**
      * Currency code
      * @param $isoCode
